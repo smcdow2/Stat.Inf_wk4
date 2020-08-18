@@ -1,0 +1,85 @@
+---
+title: "Part II"
+author: "S.McDowell"
+date: "8/18/2020"
+output: pdf_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Load library's
+```{r}
+library(ggplot2)
+library(tinytex)
+```
+
+### Overview
+This project you will analyze the effect of vitamin c on tooth growth in guinea pigs.
+
+### Part 2: Analyze Tooth Growth Data
+```{r}
+data("ToothGrowth")
+str(ToothGrowth)
+summary(ToothGrowth)
+
+p1 <- qplot(dose,len, data = ToothGrowth, color = supp, xlab = "Dose", ylab = "Length",
+            main = "ToothGrowth by Dosage and Supplement type") + geom_smooth(method = lm)
+p1
+
+
+p2 <- qplot(supp,len, data = ToothGrowth, facets = ~dose, xlab = "Supplement Type", ylab = "Length",
+            main = "ToothGrowth by Dosage and Supplement Type") + geom_boxplot(aes(fill=supp))
+p2
+
+```
+
+From the figure above, it appears that orange juice is more effective than asorbic acid at the 0.5 mg/day and 1 mg/day dosage levels. It appears that both orange juice and asorbic acid are equally effective at 2 mg/day dosage level.
+
+
+### Hypothesis Testing
+
+### Both supplements deliver the same rate of tooth growth across the data.
+```{r}
+hyp1 <- t.test(len ~ supp, data= ToothGrowth)
+c_int <- hyp1$conf.int
+c_int 
+pval <- hyp1$p.value
+pval
+```
+
+We see that the confidence interval includes 0 and the p- value (0.06) is greater than 0.05, therefore we fail to reject the null hypothesis of both supplements delivering the same rate of tooth growth across the data set.
+
+
+### Both supplements deliever the same rate of tooth growth at the dosage 0.5 mg/day.
+```{r}
+hyp2 <- t.test(len ~ supp, data= subset(ToothGrowth, dose == 0.5))
+c_int <- hyp2$conf.int
+c_int
+pval <- hyp2$p.value
+pval
+```
+We see that the confidence interval does not include 0 and the p- value (0.006) is less than 0.05, therefore we reject the null hypothesis. From the boxplots above we saw, that orange juice was more effective than asorbic acid at the 0.05 mg/day dosage level (alternative hypothesis).
+
+### Both supplements deliever the same rate of tooth growth at the dosage 1.
+```{r}
+hyp3 <- t.test(len ~ supp, data= subset(ToothGrowth, dose == 1))
+c_int <- hyp3$conf.int
+c_int
+pval <- hyp3$p.value
+pval
+```
+We see that the confidence interval does not include 0 and the p- value (0.001) is less than 0.05, therefore we reject the null hypothesis. From the boxplots above we saw, that orange juice was more effective than asorbic acid at the 1 mg/day dosage level (alternative hypothesis).
+
+### Both supplements deliever the same rate of tooth growth at the dosage 2.
+```{r}
+hyp4 <- t.test(len ~ supp, data= subset(ToothGrowth, dose == 2))
+c_int <- hyp4$conf.int
+c_int
+pval <- hyp4$p.value
+pval
+```
+We see that the confidence interval does include 0 and the p- value (0.96) is greater than 0.05, therefore we fail to reject the null hypothesis. From the boxplots above we saw, that both orange juice and asorbic acid were equally effective at the 2 mg/day dosage level.
+
+### Conclusions and Assumptions
+In conclusion, orange juice is more effective for tooth growth length than asorbic acid at the 0.05 mg/day and 1 mg/day dosage levels and both supplements are equally affective at the 2 mg/day dosage levels. We can not conlcude that orange juice is more effective than asorbic acid for the entire dataset.
